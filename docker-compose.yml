@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:14
+    container_name: expense
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_HOST
+      - POSTGRES_PORT
+    volumes:
+      - expense_data:/var/lib/postgresql/data/
+    restart: unless-stopped
+
+  web:
+    build: ./backend
+    restart: always
+    container_name: exp_backend
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - SECRET_KEY
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/backend/code 
+    depends_on:
+      - db
+
+volumes:
+  expense_data:
